@@ -30,37 +30,37 @@ echo ">>>>>>>> config containerd >>>>>>>>"
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 cat>/etc/systemd/system/containerd.service<< EOF
->[Unit]
->Description=containerd container runtime
->Documentation=https://containerd.io
->After=network.target local-fs.target
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target local-fs.target
 
->[Service]
->ExecstartPre=-/sbin/modprobe overlay
->Execstart=/usr/local/bin/containerd
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/containerd
 
->Type=notify
->Delegate=yes
->KillMode=process
->Restart=always
->RestartSec=5
-># Having non-zero Limit*s causes performance problems due to accounting overhead
-># in the kernel. We recommend using cgroups to do container-local accounting.
->LimitNPROC=infinity
->LimitCORE=infinity
->LimitNOFILE=1048576
-># Comment TasksMax if your systemd version does not supports it.
-># Only systemd 226 and above support this version.
->TasksMax=infinity
->OOMScoreAdjust=-999
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+LimitNOFILE=1048576
+# Comment TasksMax if your systemd version does not supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+OOMScoreAdjust=-999
 
->[Install]
->WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
 EOF
 echo ">>>>>>>> enable containerd >>>>>>>>"
 systemctl enable containerd --now
 echo ">>>>>>>> contianerd version >>>>>>>>"
-ctr vserion
+ctr version
 if [ $? != 0 ]; then
   echo "======== install containerd failed ========"
   exit 1
@@ -80,7 +80,10 @@ mkdir -p /usr/local/containerd/bin/ && tar -zxvf nerdctl-0.12.1-linux-amd64.tar.
 ln -s /usr/local/containerd/bin/nerdctl /usr/local/bin/nerdctl
 nerdctl version
 if [ $? != 0 ]; then
-  echo "echo "======== install nerdctl failed ========"
+  echo "======== install nerdctl failed ========"
   exit 1
 fi
-echo "echo "======== install nerdctl successed ========"
+echo "======== install nerdctl successed ========"
+echo "======== remove nerdctl-0.12.1-linux-amd64.tar.gz ======== "
+rm -f nerdctl-0.12.1-linux-amd64.tar.gz
+
