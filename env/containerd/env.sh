@@ -1,5 +1,5 @@
 #!/bin/bash
-# isntall containerd
+# install containerd
 
 echo "******** containerd env init ********"
 
@@ -86,4 +86,4 @@ fi
 echo "======== install nerdctl successed ========"
 echo "======== remove nerdctl-0.12.1-linux-amd64.tar.gz ======== "
 rm -f nerdctl-0.12.1-linux-amd64.tar.gz
-
+echo "********  All done ********"
