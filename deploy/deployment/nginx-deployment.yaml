@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 3
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+# deployment 相比于replicaset 不仅可以水平升索和扩展还可以进行滚动更新
+
+# kubectl rollout status deployment/<deployname> 查看滚动更新的状态
+
+# kubectl rollout history deployment <deploymentName> 查看滚动更新历史
+
+# kubectl rollout undo deployment <deploymentName> 回滚到上一个版本
+
+# kubectl rollout undo deployment <de0ploymentName> --to-revision=<rebisionNum> 回滚到指定的版本
+
+# 删除置顶的rs会删除rs对应的revision
