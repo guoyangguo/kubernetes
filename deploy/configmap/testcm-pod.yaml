@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testcm1-pod
+  labels:
+    name: cm
+spec:
+  containers:
+  - name: testcm1-pod
+    image: busybox
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "env"
+    env:
+      - name: MYSQL_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: cm-demo3
+            key: db.host
+      - name: MYSQL_PORT
+        valueFrom:
+          configMapKeyRef:
+            name: cm-demo3
+            key: db.port
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    envFrom:
+      - configMapRef:
+          name: cm-demo3

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  volumes:
+    - name: config-vloume
+      configMap:
+        name: cm-demo2
+  containers:
+  - name: config-volume-print
+    image: busybox
+    command: [ "/bin/sh", "-c", "cat /etc/config/redis.conf" ]
+    volumeMounts:
+      - mountPath: /etc/config 
+        name: config-vloume
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
