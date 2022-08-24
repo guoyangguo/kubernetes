@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  labels:
+    app: my-chart
+data:
+  myvalue: "Hello World"
+  drink: {{ .Values.favorite.drink | default "tea" }}
+  food: {{ .Values.favorite.food | upper | quote }}
+  {{ if eq .Values.favorite.drink "coffee" }}
+  mug: true
+  {{ end }}
+  sport: {{ .Values.favorite.sport | default "football" }}
