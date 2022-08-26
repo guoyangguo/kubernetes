@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conf
+data:
+  salad: {{ .Values.global.salad }}
+{{ (.Files.Glob "foo/*").AsConfig | indent 2 }}

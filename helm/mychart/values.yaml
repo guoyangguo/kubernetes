@@ -2,3 +2,13 @@ favorite:
   drink: coffee
   food: pizza
   sport: "basketball"
+pizzaToppings:
+  - mushrooms
+  - cheese
+  - peppers
+  - onions
+subchart:
+  dessert: ice cream
+# global values
+global:
+  salad: caesar
