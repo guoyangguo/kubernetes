@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-container
+  labels:
+    name: sec-ctx-container
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+  - name: sec-ctx
+    image: busybox
+    command: ["sh","-c","sleep 60m"]
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    securityContext:
+      runAsUser: 2000
+      allowPrivilegeEscalation: false
