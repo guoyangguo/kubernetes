@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-demo
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      tolerations: # 容忍污点将pod deploy到master节点上
+      - operator: "Exists"
+      nodeSelector:
+        kubernetes.io/hostname: master1
+      containers:
+      - name: myapp
+        image: nginx:1.7.9
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+          name: nginx

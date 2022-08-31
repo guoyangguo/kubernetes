@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-demo
+spec:
+  type: NodePort
+  sessionAffinity: ClientIP # 会话亲和性，永远访问到第一次请求带的node上
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 20
+  externalTrafficPolicy: Local # 减少网络跳数,只会请求当前节点上的Pod,master节点上有污点则无法访问
+  selector:
+    app: myapp
+  ports:
+  - port: 8080
+    targetPort: nginx
+
+
+    
