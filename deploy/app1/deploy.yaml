@@ -3,47 +3,64 @@ kind: Namespace
 metadata:
   name: kube-example
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  namespace: kube-example
+spec:
+  selector:
+    app: wordpress
+    tier: frontend
+  type: NodePort
+  ports:
+  - name: web
+    protocol: TCP
+    port: 80
+    targetPort: wdport
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
   namespace: kube-example
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: wordpress
+      tier: frontend
   template:
     metadata:
       labels:
         app: wordpress
+        tier: frontend
     spec:
+      strategy: # 滚动更新策略
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate
+      affinity: #避免单点故障
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - wordpress
       containers:
-      - name:  mysql
-        image:  mysql:5.7
-        imagePullPolicy: Always
-        args:
-        - --default_authentication_plugin=mysql_native_password
-        - --character-set-server=utf8mb4
-        - --collation-server=utf8mb4_unicode_ci
-        ports:
-        - name:  dbport
-          containerPort: 3306
-          protocol: TCP
-        env:
-        - name:  MYSQL_ROOT_PASSWORD
-          value: rootPassW0rd
-        - name: MYSQL_DATABASE
-          value: wordpress
-        - name: MYSQL_USER
-          value: wordpress
-        - name:  MYSQL_PASSWORD
-          value: wordpress
-        resources:
-          limits:
-            memory: "1024Mi"
-            cpu: "500m"
       - name: wordpress
         image: wordpress:5.3.2-apache
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
         resources:
           limits:
             memory: "128Mi"
@@ -53,24 +70,12 @@ spec:
           name:  wdport
         env:
         - name: WORDPRESS_DB_HOST
-          value: localhost:3306
+          value: wordpress-mysql:3306
         - name: WORDPRESS_DB_USER
           value: wordpress
         - name: WORDPRESS_DB_PASSWORD
           value: wordpress
-      
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: wordpress
-  namespace: kube-example
-spec:
-  selector:
-    app: wordpress
-  type: NodePort
-  ports:
-  - name: web
-    protocol: TCP
-    port: 80
-    targetPort: wdport
+        lifecycle:
+          preStop: # 生命周期钩子，留了时间给 Endpoints 控制器和 kube-proxy 更新去 Endpoints 对象和转发规则 当Pod被销毁处于terminating,还是可以处理请求，因为sleep 20s 并没有被真正的销毁
+            exec:
+              command: ["/bin/bash","-c","sleep 20"]
