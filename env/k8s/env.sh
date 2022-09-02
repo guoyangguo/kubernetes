@@ -13,9 +13,9 @@ echo "::::::::: set host ::::::::"
 
 # ipaddress not 
 cat>>/etc/hosts<< EOF
-192.168.94.100 master1
-#192.168.94.101 node1
-192.168.94.102 node2
+10.0.12.5 master1
+10.0.16.16 node1
+10.0.16.8 node2
 EOF
 
 echo "::::::::: disable firewalld ::::::::" 
@@ -116,7 +116,7 @@ echo "::::::::: set kubernetes.repo end ::::::::"
 echo "::::::::: install  kubeadmin kubelet kubectl ::::::::" 
 yum makecache fast
 #yum install -y kubelet-1.22.2 kubeadm-1.22.2 kubectl-1.22.2 --disableexcludes=kubernetes
-yum install -y kubelet-1.16.2 kubeadm-1.16.2 kubectl-1.16.2 --disableexcludes=kubernetes
+yum install -y kubelet-1.19.3 kubeadm-1.19.3 kubectl-1.19.3 --disableexcludes=kubernetes
 kubeadm version
 if [ $? != 0 ]; then
   echo ":::::::: install  kubeadmin kubelet kubectl failed ::::::::"

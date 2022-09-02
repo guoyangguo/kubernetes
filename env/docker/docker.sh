@@ -18,7 +18,7 @@ if [ "yes" = "${confirm}" ]; then
     sudo yum -y upgrade
     sudo yum install -y yum-utils
     sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-    sudo yum install docker-ce-18.09.9 docker-ce-cli-18.09.9 containerd.io -y
+    sudo yum install docker-ce-19.03.11 docker-ce-cli-19.03.11 containerd.io -y
     if [ $? -eq 0 ]; then
       echo "======== docker install successfully ========"
       echo "======== config registry-mirrors ========"
