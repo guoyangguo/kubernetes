@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-domain
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: custom-domain
+  template:
+    metadata:
+      labels:
+        app: custom-domain
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+          name: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: custom-domain
+spec:
+  clusterIP: None
+  selector:
+    app: custom-domain
+  ports:
+  - port: 80
+    targetPort: nginx
