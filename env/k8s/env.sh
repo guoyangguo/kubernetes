@@ -13,9 +13,9 @@ echo "::::::::: set host ::::::::"
 
 # ipaddress not 
 cat>>/etc/hosts<< EOF
-192.168.94.100 master1
-#192.168.94.101 node1
-192.168.94.102 node2
+10.0.12.5 master1
+10.0.16.16 node1
+10.0.16.8 node2
 EOF
 
 echo "::::::::: disable firewalld ::::::::" 
