@@ -116,7 +116,7 @@ echo "::::::::: set kubernetes.repo end ::::::::"
 echo "::::::::: install  kubeadmin kubelet kubectl ::::::::" 
 yum makecache fast
 #yum install -y kubelet-1.22.2 kubeadm-1.22.2 kubectl-1.22.2 --disableexcludes=kubernetes
-yum install -y kubelet-1.16.2 kubeadm-1.16.2 kubectl-1.16.2 --disableexcludes=kubernetes
+yum install -y kubelet-1.19.3 kubeadm-1.19.3 kubectl-1.19.3 --disableexcludes=kubernetes
 kubeadm version
 if [ $? != 0 ]; then
   echo ":::::::: install  kubeadmin kubelet kubectl failed ::::::::"
