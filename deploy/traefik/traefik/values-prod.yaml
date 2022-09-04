@@ -1,0 +1,32 @@
+# values.prod.yaml
+# Create an IngeressRoute for the dashboard
+ingeressRoute:
+  dashboard:
+    enable: true
+
+#Configuration ports
+ports:
+  web:
+    port: 8000
+    hostPort: 80 # user hostPort
+  websecure:
+    port: 8443
+    hostPort: 443
+
+#Service
+service:
+  enable: false # no port required of hostPort
+
+#Logs
+logs:
+  general:
+    level: debug
+
+tolerations:
+- key: "node-role.kubernetes.io/master"
+  operator: "Equal"
+  effect: "NoSchedule"
+
+nodeSelector:
+  kubernetes.io/hostname: "master1"
+  
