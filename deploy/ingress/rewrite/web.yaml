@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo
+spec:
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      containers:
+      - name: web
+        image: cnych/todo:v1.1
+        env:
+        - name: "DBHOST"
+          value: "mongodb://mongo.default.svc.cluster.local:27017"
+        ports:
+        - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo
+spec:
+  selector:
+    app: todo
+  type: ClusterIP
+  ports:
+  - name: web
+    port: 3000
+    targetPort: 3000
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: todo
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/app-root: /app/
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 #rewrite
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^/stylesheets/(.*)$ /app/stylesheets/$1 redirect; # 为css 添加/app前缀
+      rewrite ^/images/(.*)$ /app/images/$1 redirect;
+      rewrite ^/javascripts/(.*)$ /app/javascripts/$1 redirect;
+spec:
+  rules:
+  - host: todo.autumn.com
+    http:
+      paths:
+      - path: /app(/|$)(.*)
+        backend:
+          serviceName: todo
+          servicePort: 3000
