@@ -1,7 +1,9 @@
 #!/bin/bash
 # install k8s
+echo "======== are you sure want to install k8s? input node name start [master/node1/node2] ========"
+read -r nodename
 
-echo "******** k8s env init ********"
+echo "******** k8s env $nodename init ********"
 
 echo "::::::::: yum update ::::::::"
 yum -y update
@@ -10,10 +12,10 @@ echo "::::::::: install wget ::::::::"
 yum install wget -y
 
 echo "::::::::: set host ::::::::"
-
+hostnamectl set-hostname $nodename
 # ipaddress not 
 cat>>/etc/hosts<< EOF
-10.0.12.5 master1
+10.0.12.5 master
 10.0.16.16 node1
 10.0.16.8 node2
 EOF
