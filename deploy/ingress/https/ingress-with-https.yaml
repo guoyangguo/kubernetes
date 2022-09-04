@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress-with-https
+spec:
+  selector:
+    matchLabels:
+      app: ingress-with-https
+  template:
+    metadata:
+      labels:
+        app: ingress-with-https
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+          name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-with-https
+spec:
+  selector:
+    app: ingress-with-https
+  ports:
+  - port: 80
+    targetPort: web
+    name: web
+
+
