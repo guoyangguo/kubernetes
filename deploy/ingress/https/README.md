@@ -19,3 +19,11 @@ spec:
         - ng.autumn.com
       secretName: foo-tls
 ```
+## Config with cert-manager
+### install cert-manager
+``` shell
+# Kubernetes 1.16+
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
+# Kubernetes <1.16
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager-legacy.yaml
+```
