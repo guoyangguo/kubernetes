@@ -1,0 +1,17 @@
+# production-ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: canary
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/canary: "true" # enable canary 开启灰度发布
+    nginx.ingress.kubernetes.io/canary-weight: "30" # 将30%的流量切换到当前的canar版本
+spec:
+  rules:
+  - host: echo.autumn.com
+    http:
+      paths:
+      - backend:
+          serviceName: canary
+          servicePort: 80
