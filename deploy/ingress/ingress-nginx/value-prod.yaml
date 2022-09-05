@@ -20,8 +20,8 @@ controller:
     operator: "Equal"
     effect: "NoSchedule"
 
-  nodeSelector:   # 固定到master1节点
-    kubernetes.io/hostname: "master1"
+  nodeSelector:   # 固定到master节，部署到哪个边缘节点就指定哪个
+    kubernetes.io/hostname: "master"
 
   service:  # HostNetwork 模式不需要创建service
     enabled: false

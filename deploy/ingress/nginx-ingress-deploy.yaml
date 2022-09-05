@@ -49,10 +49,21 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - foo'
 spec:
   rules:
-  - host: ng.autumn.com
+  - host: autumnin.com
     http:
       paths:
       - path: "/"
         backend:
           serviceName: nginx-test
           servicePort: 80
+---
+apiVersion: v1
+data:
+  README.md: IyBBZGQgYXV0aG9yYXRpb24gZm9yIGluZ3Jlc3MKIyMgQ3JlYXRlIGEgYXV0aCBjZXJ0IHdpdGggc2VjcmV0Ci0gaHRwYXNzd2QgLWMgYXV0aCBmb28KICAKLSBrdWJlY3RsIGNyZWF0ZSBzZWNyZXQgZ2VuZXJpYyBiYXNpYy1hdXRoIC0tZnJvbSBhdXRoCiMjIEFkZCBpbmdyZXNzIGF1dGggCnVwZGF0ZSBuZ2lueC10ZXN0IGFubm90YXRpb25zIApuZ2lueC5pbmdyZXNzLmt1YmVybmV0ZXMuaW8vYXV0aC10eXBlOiBiYXNpYwpuZ2lueC5pbmdyZXNzLmt1YmVybmV0ZXMuaW8vYXV0aC1zZWNyZXQ6IGJhc2ljLWF1dGgKbmdpbnguaW5ncmVzcy5rdWJlcm5ldGVzLmlvL2F1dGgtcmVhbG06ICdBdXRoZW50aWNhdGlvbiBSZXF1aXJlZCAtIGZvbyc=
+  auth: Zm9vOiRhcHIxJFgvaTZhZC8yJHd4Rmd5MU9zalVWdzgveEZLR2tmdjAK
+kind: Secret
+metadata:
+  creationTimestamp: "2022-09-04T06:20:59Z"
+  name: basic-auth
+  namespace: default
+type: Opaque
