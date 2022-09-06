@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: local-pv
+  namespace: default
+  labels:
+    app: local-pv
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.7.9
+    resources:
+      limits:
+        cpu: 200m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 200Mi
+    ports:
+    - containerPort:  80
+      name:  http
+    volumeMounts:
+    - name: data
+      mountPath: /usr/share/nginx/html
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: pvc-local
+  restartPolicy: Always
