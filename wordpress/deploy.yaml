@@ -1,31 +1,10 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kube-example
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: wordpress
-  namespace: kube-example
-spec:
-  selector:
-    app: wordpress
-    tier: frontend
-  type: NodePort
-  ports:
-  - name: web
-    protocol: TCP
-    port: 80
-    targetPort: wdport
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
-  namespace: kube-example
+  namespace: autumnin-wordpress
 spec:
-  replicas: 3
+  replicas: 2
   strategy: # 滚动更新策略
         rollingUpdate:
           maxSurge: 1
@@ -84,10 +63,45 @@ spec:
               command: ["/bin/bash","-c","sleep 20"]
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  namespace: autumnin-wordpress
+spec:
+  selector:
+    app: wordpress
+    tier: frontend
+  type: NodePort
+  ports:
+  - name: web
+    protocol: TCP
+    port: 80
+    targetPort: wdport
+---    
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress
+  labels:
+    name: autumnin-wordpress
+spec:
+  rules:
+  - host: autumnin.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: <Service>
+            port: 
+              number: <Port>
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: wordpress-secret
-  namespace: kube-example
+  namespace: autumnin-wordpress
 type: Opaque
 data:
   WORDPRESS_DB_PASSWORD: d29yZHByZXNz

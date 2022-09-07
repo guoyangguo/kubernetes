@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kube-example
+  name: autumnin-wordpress
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: wordpress-mysql
-  namespace: kube-example
+  namespace: autumnin-wordpress
 spec:
   selector:
     app: wordpress
@@ -20,7 +20,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name:  wordpress-mysql
-  namespace: kube-example
+  namespace: autumnin-wordpress
   labels:
     app:  wordpress
     tier: mysql
