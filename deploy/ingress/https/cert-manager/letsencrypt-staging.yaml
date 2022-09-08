@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging-http01
+spec:
+  acme:
+    # ACME 服务端地址
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # 用于 ACME 注册的邮箱
+    email: 596840946@qq.com
+    # 用于存放 ACME 帐号 private key 的 secret
+    privateKeySecretRef:
+      name: letsencrypt-staging-http01
+    solvers:
+    - http01: # ACME HTTP-01 类型
+        ingress:
+          class: nginx  # 指定ingress的名称

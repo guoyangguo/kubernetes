@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - foo'
 spec:
   rules:
-  - host: ng.autumn.com
+  - host: login.autumn.com
     http:
       paths:
       - path: "/"
@@ -19,5 +19,5 @@ spec:
           servicePort: web
   tls:
     - hosts:
-        - ng.autumn.com
+        - login.autumn.com
       secretName: foo-tls
