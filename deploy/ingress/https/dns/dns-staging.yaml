@@ -1,0 +1,24 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: autumnin-staging-dns01
+  namespace: cert-manager
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: helloguoguoyang@gmail.com
+    privateKeySecretRef:
+      name: autumnin-staging-dns01
+    solvers:
+    - dns01:   # ACME DNS-01 类型
+        webhook:
+          groupName: acme.yourcompany.com
+          solverName: alidns
+          config:
+            region: ""
+            accessKeySecretRef:  # 引用 ak
+              name: alidns-secret
+              key: access-key
+            secretKeySecretRef:  # 引用 sk
+              name: alidns-secret
+              key: secret-key
