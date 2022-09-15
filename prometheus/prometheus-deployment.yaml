@@ -2,43 +2,36 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
-  namespace: kube-monitor
+  namespace: prometheus
   labels:
     app: prometheus
 spec:
   selector:
     matchLabels:
       app: prometheus
-  replicas: 2
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate
   template:
     metadata:
       labels:
         app: prometheus
     spec:
-      nodeSelector:
-        monitor: prometheus
       serviceAccountName: prometheus
-      volumeMounts:
-        - name: config-volume
-          mountPath: /etc/prometheus
-        - name: data
-          mountPath: /prometheus
       containers:
-      - name:  prometheus
-        image:  prom/prometheus:v2.14.0
+      - image: prom/prometheus:v2.24.1
+        name: prometheus
         args:
         - "--config.file=/etc/prometheus/prometheus.yml"
         - "--storage.tsdb.path=/prometheus"  # 指定tsdb数据路径
         - "--storage.tsdb.retention.time=24h"
         - "--web.enable-admin-api"  # 控制对admin HTTP API的访问，其中包括删除时间序列等功能
         - "--web.enable-lifecycle"  # 支持热更新，直接执行localhost:9090/-/reload立即生效
-        - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-        - "--web.console.templates=/usr/share/prometheus/consoles"
+        ports:
+        - containerPort: 9090
+          name: http
+        volumeMounts:
+        - mountPath: "/etc/prometheus"
+          name: config-volume
+        - mountPath: "/prometheus"
+          name: data
         resources:
           requests:
             cpu: 100m
@@ -46,17 +39,10 @@ spec:
           limits:
             cpu: 100m
             memory: 512Mi
-        ports:
-        - containerPort:  80
-          name:  MYAPP
-        volumeMounts:
-        - name: localtime
-          mountPath: /etc/localtime
       volumes:
-      - hostPath:
-          path: /data/prometheus/
-        name: data
+      - name: data
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
       - configMap:
-          name: prometheus-config
+          name: prometheus-cm
         name: config-volume
-      restartPolicy: Always

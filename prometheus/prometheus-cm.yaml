@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-config
-  namespace: kube-monitor
+  name: prometheus-cm
+  namespace: prometheus
   labels:
     app: prometheus
 data:
@@ -11,6 +11,6 @@ data:
       scrape_interval: 15s
       scrape_timeout: 15s
     scrape_configs:
-    - job_name: "prometheus"
+    - job_name: 'prometheus'
       static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ['localhost:9090']
