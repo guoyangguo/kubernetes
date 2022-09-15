@@ -1,4 +1,9 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops
+---  
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: jenkins-pv
@@ -84,10 +89,6 @@ metadata:
   name: jenkins
   namespace: devops
 spec:
-  volumes: 
-    - name: jenkins
-      persistentVloumeClaim:
-        claimName: jenkins-pvc
   selector:
     matchLabels:
       app: jenkins
@@ -96,13 +97,17 @@ spec:
       labels:
         app: jenkins
     spec:
+      volumes: 
+      - name: jenkinshome
+        persistentVolumeClaim:
+          claimName: jenkins-pvc
       serviceAccount: jenkins
       initContainers: 
       - name: fix-permissions
-        images: busybox
+        image: busybox
         command: ["sh","-c","chown -R 1000:1000 /var/jenkins_home"]
         securityContext:
-          privilrged: true
+          privileged: true
         volumeMounts:
           - name: jenkinshome
             mountPath: /var/jenkins_home
@@ -112,7 +117,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: JAVA_OPTS
-        value: -Dhudson.model.DownloadService.noSignatureCheck=true
+          value: -Dhudson.model.DownloadService.noSignatureCheck=true
         resources:
           limits:
             memory: "2048Mi"
@@ -147,5 +152,27 @@ spec:
     app: jenkins
   ports:
     - name: web
-    
+      port: 8080
+      targetPort: web
+    - name: agent
+      port: 50000
+      targetPort: agent
 
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jenkins-ingress
+  namespace: devops
+spec:
+  rules:
+  - host: jenkins.autumnin.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jenkins
+            port:
+              number: 8080
