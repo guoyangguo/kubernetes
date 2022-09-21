@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: autumnin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login
+  namespace: autumnin
+  labels:
+    app: login
+spec:
+  selector:
+    matchLabels:
+      app: login
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: login
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name: login
+        image: guoguoyang/autumnin-login:v1.0.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 50Mi
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        ports:
+        - containerPort:  80
+          name: login
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: login
+  namespace: autumnin
+spec:
+  selector:
+    app: login
+  type: ClusterIP
+  ports:
+  - name: login
+    protocol: TCP
+    port: 80
+---
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: login
+  namespace: autumnin
+spec:
+  rules:
+  - host: autumnin.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: login
+            port:
+              number: 80 
